@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.mirbor.models.Device
 import com.mirbor.models.JwtDeviceResponse
 import com.mirbor.models.Response
+import com.tinder.scarlet.Scarlet
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -29,8 +30,17 @@ object Main {
             return@run responseObject.token
         }
 
+        val scarletInstance = Scarlet.Builder()
+                .webSocketFactory(okHttpClient.newWebSocketFactory("wss://ws-feed.gdax.com"))
+                .addMessageAdapterFactory(MoshiMessageAdapter.Factory())
+                .addStreamAdapterFactory(RxJava2StreamAdapterFactory())
+                .build()
+
+        val gdaxService = scarletInstance.create<GdaxService>()
 
     }
+
+
 
     private fun startPingForAwake() {
         scheduler.scheduleAtFixedRate({}, 15, 15, TimeUnit.MINUTES)
