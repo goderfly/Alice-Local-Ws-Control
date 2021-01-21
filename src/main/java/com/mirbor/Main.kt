@@ -15,16 +15,16 @@ object Main {
     fun registerTelegramBot() {
         println("Register telegram bot")
         ApiContextInitializer.init()
-        bot = AliceControlTelegramBot().apply {
-            TelegramBotsApi().registerBot(this)
-        }
+        bot = AliceControlTelegramBot()
+        TelegramBotsApi().registerBot(bot)
     }
 
     @JvmStatic
     fun main(args: Array<String>) {
         registerTelegramBot()
         initStartInfo()
-        YandexStationComminication.test()
+
+        YandexStationComminication.sendCommandToAlice("Включи король и шут два монаха в одну ночь")
     }
 
     private fun initStartInfo() {

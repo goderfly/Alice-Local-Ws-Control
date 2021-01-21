@@ -1,5 +1,8 @@
 package com.mirbor
 
+import com.google.gson.Gson
+import com.mirbor.models.AliceResponse
+import com.mirbor.models.Response
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -50,28 +53,48 @@ object YandexStationComminication {
         deviceId = devId
     }
 
-    fun test() {
-        val testPayload = """
-        {
-            "conversationToken": "$jwtDeviceToken",
-            "id": "$deviceId",
-            "sentTime": "${System.currentTimeMillis() * 1000}",
-            "payload": {
-                "command": "sendText",
-                "text": "Повтори за мной 'Локальный сервер подключен к станции'"
-            }
-        }""".trimIndent()
+    fun sendCommandToAlice(text: String) {
+            val testPayload = """
+            {
+                "conversationToken": "$jwtDeviceToken",
+                "id": "$deviceId",
+                "sentTime": "${System.currentTimeMillis() * 1000}",
+                "payload": {
+                    "command": "sendText",
+                    "text": "$text"
+                }
+            }""".trimIndent()
 
 
-        ws.send(testPayload)
+            ws.send(testPayload)
     }
 
 
-
-
     class WebSocketCallbacks : WebSocketListener() {
+        private var savedSongFullname: String = "WTF?"
+
         override fun onMessage(webSocket: WebSocket, text: String) {
-            println(text)
+
+            val responseObject = Gson().fromJson(text, AliceResponse::class.java)
+            val songTitle = responseObject.state.playerState.title
+            val songSubTitle = responseObject.state.playerState.subtitle
+            val songFullName = "$songTitle - $songSubTitle"
+
+            updatePinnedMessageIfNeed(songFullName)
+        }
+
+        private fun updatePinnedMessageIfNeed(songFullName: String) {
+            if (songFullName != savedSongFullname) {
+                try {
+                    Main.bot.editPinnedMessage(songFullName)
+                } catch (e: Exception) {
+                    if (e.cause.toString().contains("message content and reply markup are exactly the same")) {
+                        return
+                    }
+                    println(e.message)
+                }
+                savedSongFullname = songFullName
+            }
         }
 
         override fun onOpen(webSocket: WebSocket, response: okhttp3.Response) {

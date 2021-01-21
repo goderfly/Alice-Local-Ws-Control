@@ -3,30 +3,23 @@ package com.mirbor.models
 import com.google.gson.annotations.SerializedName
 
 data class AliceResponse(
-        @SerializedName("extra") var extra: Extra,
+        @SerializedName("extra") var extra: Any,
         @SerializedName("id") var id: String,
-        @SerializedName("sentTime") var sentTime: Int,
+        @SerializedName("sentTime") var sentTime: Long,
         @SerializedName("state") var state: State
 )
 
-data class Extra(
-        @SerializedName("appState") var appState: String,
-        @SerializedName("watchedVideoState") var watchedVideoState: String
-)
 
 data class Hdmi(
         @SerializedName("capable") var capable: Boolean,
         @SerializedName("present") var present: Boolean
 )
 
-data class Extra(
-        @SerializedName("coverURI") var coverURI: String,
-        @SerializedName("stateType") var stateType: String
-)
+
 
 data class PlayerState(
         @SerializedName("duration") var duration: Double,
-        @SerializedName("extra") var extra: Extra,
+        @SerializedName("extra") var extra: Any,
         @SerializedName("hasNext") var hasNext: Boolean,
         @SerializedName("hasPause") var hasPause: Boolean,
         @SerializedName("hasPlay") var hasPlay: Boolean,
