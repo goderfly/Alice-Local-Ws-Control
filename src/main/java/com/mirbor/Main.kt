@@ -44,10 +44,6 @@ object Main {
             val responseString = this.third.component1()
             val responseObject = Gson().fromJson(responseString, Response::class.java)
             yandexDevice = responseObject.devices.first()
-            println("Private Key")
-            println(yandexDevice.glagol.security.server_private_key)
-            println("Server sert")
-            println(yandexDevice.glagol.security.server_certificate)
             cert = yandexDevice.glagol.security.server_certificate.decodeCertificatePem()
             return@run yandexDevice.id to yandexDevice.platform
         }
@@ -65,7 +61,7 @@ object Main {
 
         val client = OkHttpClient.Builder()
                 .sslSocketFactory(certificates.sslSocketFactory(), certificates.trustManager)
-                .hostnameVerifier(HostnameVerifier { hostname, session -> true })
+                .hostnameVerifier(HostnameVerifier { _, _ -> true })
                 .build()
 
         val request = Request.Builder()

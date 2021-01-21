@@ -38,12 +38,8 @@ dependencies {
 
     implementation "com.squareup.okhttp3:okhttp:4.9.0"
     implementation "com.squareup.okhttp3:okhttp-tls:4.9.0"
-    implementation 'com.tinder.scarlet:scarlet:0.1.11'
-    implementation 'com.tinder.scarlet:websocket-okhttp:0.1.11'
-    implementation 'com.tinder.scarlet:message-adapter-moshi:0.1.11'
 
     implementation 'com.sparkjava:spark-core:2.7.2'
-    implementation "org.java-websocket:Java-WebSocket:1.5.1"
     implementation "org.telegram:telegrambots:4.5"
     implementation 'com.offbytwo.jenkins:jenkins-client:0.3.8'
 
