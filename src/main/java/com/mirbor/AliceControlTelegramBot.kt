@@ -1,9 +1,13 @@
 package com.mirbor
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
+import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText
 import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent
+import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResult
+import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 
@@ -19,6 +23,35 @@ class AliceControlTelegramBot : TelegramLongPollingBot() {
 
         println(update.toString())
         try {
+
+            if (update.hasMessage() && update.message.hasViaBot()){
+                YandexStationComminication.sendCommandToAlice(update.message.text)
+            }
+
+            if (update.hasInlineQuery()) {
+                val r1: InlineQueryResult = InlineQueryResultArticle(
+                        update.inlineQuery.id,
+                        "Нажмите, что бы отправить команду",
+                        InputTextMessageContent("${update.inlineQuery.query}"),
+                        null,
+                        null,
+                        false,
+                        "${update.inlineQuery.query}",
+                        null,
+                        null,
+                        null
+                        )
+
+                Main.bot.execute(
+                        AnswerInlineQuery().apply {
+                            inlineQueryId = update.inlineQuery.id
+                            results = listOf(r1)
+                            cacheTime = 9999
+                        }
+                )
+
+            }
+
             if (update.hasCallbackQuery()) {
                 val callBackData = update.callbackQuery.data
                 val callBackMessageId = update.callbackQuery.message.messageId.toInt()
@@ -81,31 +114,40 @@ class AliceControlTelegramBot : TelegramLongPollingBot() {
         val inlineKeyboardMarkup = InlineKeyboardMarkup(
                 listOf(mutableListOf(
 
-                        InlineKeyboardButton("⏮")
-                                .setCallbackData("previous_"),
-                        InlineKeyboardButton("⏸")
-                                .setCallbackData("pause_"),
-                        InlineKeyboardButton("⏭")
-                                .setCallbackData("next_")
+                        InlineKeyboardButton("⏮").apply {
+                            callbackData = "previous_"
+                        },
+
+                        InlineKeyboardButton("⏸").apply {
+                            callbackData = "pause_"
+                        },
+                        InlineKeyboardButton("⏭").apply {
+                            callbackData = "next_"
+                        }
+                ), mutableListOf(
+                        InlineKeyboardButton("Громкость -").apply {
+                            callbackData = "volume-_"
+                        },
+                        InlineKeyboardButton("Громкость +").apply {
+                            callbackData = "volume+_"
+                        }
 
                 ), mutableListOf(
-                        InlineKeyboardButton("Громкость -")
-                                .setCallbackData("volume-_"),
-                        InlineKeyboardButton("Громкость +")
-                                .setCallbackData("volume+_")
-                ), mutableListOf(
-                        InlineKeyboardButton("Случайная песня КиШ")
-                                .setCallbackData("random_")
+                        InlineKeyboardButton("Случайная песня КиШ").apply {
+                            callbackData = "random_"
+                        }
+
                 )
                 )
         )
 
         execute(
-                EditMessageText()
-                        .setText("Сейчас играет: $text")
-                        .setChatId(BOT_WORK_GROUP)
-                        .setMessageId(PINNED_MESSAGE_ID)
-                        .setReplyMarkup(inlineKeyboardMarkup)
+                EditMessageText().apply {
+                    chatId = BOT_WORK_GROUP
+                    setText("Сейчас играет: $text")
+                    messageId = PINNED_MESSAGE_ID
+                    replyMarkup = inlineKeyboardMarkup
+                }
         )
 
 

@@ -5,8 +5,11 @@ import com.mirbor.models.Device
 import com.mirbor.models.JwtDeviceResponse
 import com.mirbor.models.Response
 import okhttp3.tls.decodeCertificatePem
-import org.telegram.telegrambots.ApiContextInitializer
 import org.telegram.telegrambots.meta.TelegramBotsApi
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
+
+
+
 
 object Main {
     lateinit var bot: AliceControlTelegramBot
@@ -14,9 +17,9 @@ object Main {
     @JvmStatic
     fun registerTelegramBot() {
         println("Register telegram bot")
-        ApiContextInitializer.init()
+        //ApiContextInitializer.init()
         bot = AliceControlTelegramBot()
-        TelegramBotsApi().registerBot(bot)
+        TelegramBotsApi(DefaultBotSession::class.java).registerBot(bot)
     }
 
     @JvmStatic
