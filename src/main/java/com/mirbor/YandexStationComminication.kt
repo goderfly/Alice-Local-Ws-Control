@@ -19,7 +19,7 @@ object YandexStationComminication {
 
     private val listener = WebSocketCallbacks()
 
-    init {
+    private fun init() {
         val certificates = HandshakeCertificates.Builder()
                 .addTrustedCertificate(certificate)
                 .build()
@@ -37,8 +37,9 @@ object YandexStationComminication {
         ws = client.newWebSocket(request, listener)
     }
 
-    fun setCert(cert: X509Certificate) {
+    fun setCertAndInit(cert: X509Certificate) {
         certificate = cert
+        init()
     }
 
     fun setJwtDeviceToken(token: String) {

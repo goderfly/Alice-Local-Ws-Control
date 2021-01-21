@@ -24,9 +24,7 @@ object Main {
     fun main(args: Array<String>) {
         registerTelegramBot()
         initStartInfo()
-
-
-
+        YandexStationComminication.test()
     }
 
     private fun initStartInfo() {
@@ -39,7 +37,7 @@ object Main {
             val cert = yandexDevice.glagol.security.server_certificate.decodeCertificatePem()
             val deviceId = yandexDevice.id
 
-            YandexStationComminication.setCert(cert)
+            YandexStationComminication.setCertAndInit(cert)
             YandexStationComminication.setDeviceId(deviceId)
 
             return@run deviceId to yandexDevice.platform
