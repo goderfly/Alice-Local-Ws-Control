@@ -10,6 +10,7 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okhttp3.tls.HandshakeCertificates
 import okhttp3.tls.decodeCertificatePem
+import okio.ByteString
 import java.security.cert.X509Certificate
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -25,6 +26,10 @@ object Main {
     private lateinit var cert: X509Certificate
 
     private val listener = object : WebSocketListener() {
+        override fun onMessage(webSocket: WebSocket, text: String) {
+            println(text)
+        }
+
         override fun onOpen(webSocket: WebSocket, response: okhttp3.Response) {
             println("Opened")
         }
@@ -55,6 +60,17 @@ object Main {
             return@run responseObject.token
         }
 
+        val testPayload = """
+        {
+            "conversationToken": "$jwtToken",
+            "id": "$id",
+            "sentTime": "${System.currentTimeMillis() * 1000}",
+            "payload": {
+                "command": "sendText",
+                "text": "Повтори за мной 'Локальный сервер подключен к станции'"
+            }
+        }""".trimIndent()
+
         val certificates = HandshakeCertificates.Builder()
                 .addTrustedCertificate(cert)
                 .build()
@@ -65,14 +81,11 @@ object Main {
                 .build()
 
         val request = Request.Builder()
-                .addHeader("Origin", "http://yandex.ru/")
+                .addHeader("Origin", "https://yandex.ru/")
                 .url("wss://$LOCAL_ADDRESS:$LOCAL_PORT/")
                 .build()
 
         ws = client.newWebSocket(request, listener)
-    }
-
-    private fun startPingForAwake() {
-        scheduler.scheduleAtFixedRate({}, 15, 15, TimeUnit.MINUTES)
+        ws.send(testPayload)
     }
 }
