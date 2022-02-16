@@ -37,10 +37,10 @@ dependencies {
     implementation "org.postgresql:postgresql:42.2.2"
 
     implementation "com.squareup.okhttp3:okhttp:4.9.0"
-    implementation "com.squareup.okhttp3:okhttp-tls:4.9.0"
+    implementation "com.squareup.okhttp3:okhttp-tls:4.9.3"
 
     implementation 'com.sparkjava:spark-core:2.7.2'
-    implementation "org.telegram:telegrambots:5.0.1"
+    implementation "org.telegram:telegrambots:5.7.1"
     implementation 'com.offbytwo.jenkins:jenkins-client:0.3.8'
 
     implementation "com.github.kittinunf.fuel:fuel:1.12.1"
@@ -51,4 +51,5 @@ dependencies {
     implementation 'org.apache.commons:commons-text:1.8'
 
     implementation 'org.jsoup:jsoup:1.11.2'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6'
 }

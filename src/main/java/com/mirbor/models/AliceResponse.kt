@@ -41,5 +41,5 @@ data class State(
         @SerializedName("playerState") var playerState: PlayerState,
         @SerializedName("playing") var playing: Boolean,
         @SerializedName("timeSinceLastVoiceActivity") var timeSinceLastVoiceActivity: Int,
-        @SerializedName("volume") var volume: Int
+        @SerializedName("volume") var volume: Float
 )

@@ -10,7 +10,7 @@ data class Config (
 )
 
 data class Device (
-        var activation_code : Int,
+        var activation_code : Long,
         var activation_region : String,
         var config : Config,
         var glagol : Glagol,

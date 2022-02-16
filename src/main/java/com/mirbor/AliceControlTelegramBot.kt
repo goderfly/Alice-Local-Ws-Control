@@ -21,14 +21,14 @@ class AliceControlTelegramBot : TelegramLongPollingBot() {
 
     override fun onUpdateReceived(update: Update) {
 
-        println(update.toString())
+        println("update $update")
         try {
 
             if (update.hasMessage() && update.message.hasViaBot()){
                 YandexStationComminication.sendCommandToAlice(update.message.text)
             }
 
-            if (update.hasInlineQuery()) {
+            if (update.hasInlineQuery() && update.inlineQuery.query.isNotEmpty()) {
                 val r1: InlineQueryResult = InlineQueryResultArticle(
                         update.inlineQuery.id,
                         "Нажмите, что бы отправить команду",
@@ -71,11 +71,11 @@ class AliceControlTelegramBot : TelegramLongPollingBot() {
                         }
                         startsWith("volume-_") -> {
                             println("Валумэ -")
-                            YandexStationComminication.sendCommandToAlice("Уменьши громкость")
+                            YandexStationComminication.sendCommandToAlice("Уменьшить громкость")
                         }
                         startsWith("volume+_") -> {
                             println("Валумэ +")
-                            YandexStationComminication.sendCommandToAlice("Уменьшить громкость")
+                            YandexStationComminication.sendCommandToAlice("Увеличить громкость")
                         }
                         startsWith("random_") -> {
                             println("Случайная песня КиШ")
@@ -91,7 +91,7 @@ class AliceControlTelegramBot : TelegramLongPollingBot() {
                 return
             }
 
-            println(update.toString())
+            println("onUpdateReceived $update")
         } catch (e: Exception) {
             println("onUpdateReceived exception ${e.message}")
             e.printStackTrace()
@@ -100,10 +100,10 @@ class AliceControlTelegramBot : TelegramLongPollingBot() {
 
 
     companion object {
-        private const val BOT_TOKEN = "1503011046:AAG-ZsxsXNcuNEz9NOsMES2vvE7sXyOEsm4"
+        private const val BOT_TOKEN = "5145902683:AAG_a_r_0DECxgUX9KT5pjqZUhlQXZCZHIo"
         private const val BOT_NAME = "yandex_alice_bot"
-        private const val BOT_WORK_GROUP = "-1001489932708"
-        private const val PINNED_MESSAGE_ID = 1066
+        private const val BOT_WORK_GROUP = "-1001774854613"
+        private const val PINNED_MESSAGE_ID = 3
     }
 
     fun sendNewNotification(text: String?) {

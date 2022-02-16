@@ -31,12 +31,14 @@ object Main {
     }
 
     private fun initStartInfo() {
+        println("initStartInfo")
         lateinit var yandexDevice: Device
 
         val (id, platform) = ApiManager().getDeviceList().run {
             val responseString = this.third.component1()
             val responseObject = Gson().fromJson(responseString, Response::class.java)
             yandexDevice = responseObject.devices.first()
+            println("yandexDevice ${yandexDevice.toJson()}")
             val cert = yandexDevice.glagol.security.server_certificate.decodeCertificatePem()
             val deviceId = yandexDevice.id
 
@@ -50,7 +52,7 @@ object Main {
             val responseString = this.third.component1()
             val responseObject = Gson().fromJson(responseString, JwtDeviceResponse::class.java)
             val token = responseObject.token
-
+            println("jwtToken ${token}")
             YandexStationComminication.setJwtDeviceToken(token)
 
             return@run token
