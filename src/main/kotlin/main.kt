@@ -24,23 +24,18 @@ import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 import theme.Colors
 import theme.typography
-import java.util.*
 
 lateinit var bot: AliceControlTelegramBot
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() = application {
-    registerTelegramBot()
-    initStartInfo()
-    YandexStationComminication.sendCommandToAlice("Включи король и шут два монаха в одну ночь")
-
     val isOpen = remember { mutableStateOf(true) }
 
     val trayState = rememberTrayState()
     Tray(
         state = trayState,
         icon = TrayIcon,
-        hint = "Yandex Mail to Telegram Resender",
+        hint = "Локально управление Алисой",
         menu = {
             Item(
                 text = "Сменить почту/Chat ID",
@@ -62,7 +57,7 @@ fun main() = application {
     }
 }
 
-private fun initStartInfo() {
+fun initStartInfo() {
     println("initStartInfo")
     lateinit var yandexDevice: Device
 
@@ -91,7 +86,6 @@ private fun initStartInfo() {
     }
 }
 
-
 fun registerTelegramBot() {
     println("Register telegram bot")
     //ApiContextInitializer.init()
@@ -104,12 +98,12 @@ fun registerTelegramBot() {
 @Composable
 private fun mainWindow(isOpen: MutableState<Boolean>) {
     Window(
-        title = "Yandex Mail to Telegram Resender",
+        title = "Локальное управление Алисой",
         onCloseRequest = {
             println("onCloseRequest")
             isOpen.value = false
         },
-        state = WindowState(size = WindowSize(606.dp, 340.dp), position = WindowPosition(Alignment.Center)),
+        state = WindowState(size = WindowSize(606.dp, 420.dp), position = WindowPosition(Alignment.Center)),
         resizable = false,
         alwaysOnTop = false
     ) {
@@ -117,7 +111,7 @@ private fun mainWindow(isOpen: MutableState<Boolean>) {
             colors = Colors.material,
             typography = typography,
         ) {
-            AuthScreen(isOpen)
+            ConfigureScreen(isOpen)
         }
 
     }

@@ -1,3 +1,9 @@
+import alicews.ApiManager
+import alicews.YandexStationComminication
+import alicews.models.Device
+import alicews.models.JwtDeviceResponse
+import alicews.models.Response
+import alicews.toJson
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,17 +20,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.google.gson.Gson
+import okhttp3.tls.decodeCertificatePem
 import theme.TelegramColors
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun AuthScreen(
+fun ConfigureScreen(
     isOpen: MutableState<Boolean>
 ) {
-    val yourEmail = remember { mutableStateOf(TextFieldValue(ContentRepository.yourEmail)) }
-    val yourPassword = remember { mutableStateOf(TextFieldValue(ContentRepository.yourPassword)) }
-    val botId = remember { mutableStateOf(TextFieldValue(ContentRepository.botId)) }
-    val chatId = remember { mutableStateOf(TextFieldValue(ContentRepository.chatId)) }
+    val telegramBotToken = remember { mutableStateOf(TextFieldValue(ContentRepository.telegramBotToken)) }
+    val telegramGroupId = remember { mutableStateOf(TextFieldValue(ContentRepository.telegramGroupId)) }
+    val telegramIdPinMessage = remember { mutableStateOf(TextFieldValue(ContentRepository.telegramIdPinMessage)) }
+    val localAliceIp = remember { mutableStateOf(TextFieldValue(ContentRepository.localAliceIp)) }
+    val localAlicePort = remember { mutableStateOf(TextFieldValue(ContentRepository.localAlicePort)) }
 
     val errorStateAuth = remember { mutableStateOf(false) }
     val errorStateEmptyChatId = remember { mutableStateOf(false) }
@@ -33,123 +42,92 @@ fun AuthScreen(
     Column(
         modifier = Modifier.background(TelegramColors.leftBarSelection)
     ) {
-        Row {
-            OutlinedTextField(
-                modifier = Modifier.padding(PaddingValues(8.dp, 8.dp, 8.dp, 8.dp)),
-                value = yourEmail.value,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.AlternateEmail,
-                        contentDescription = "image",
-                        tint = Color.White
-                    )
-                },
-                isError = errorStateAuth.value,
-                textStyle = MaterialTheme.typography.body1,
-                onValueChange = {
-                    errorStateAuth.value = false
-                    ContentRepository.yourEmail = it.text
-                    yourEmail.value = it
-                },
-                label = { Text(color = Color.White, text = "Введите адрес почты") }
-            )
-            OutlinedTextField(
-
-                modifier = Modifier.padding(PaddingValues(8.dp, 8.dp, 8.dp, 8.dp)),
-                value = yourPassword.value,
-                enabled = true,
-                isError = errorStateAuth.value,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Password,
-                        contentDescription = "image",
-                        tint = Color.White
-                    )
-                },
-                textStyle = MaterialTheme.typography.body1,
-                onValueChange = {
-                    errorStateAuth.value = false
-                    ContentRepository.yourPassword = it.text
-                    yourPassword.value = it
-                },
-                label = { Text(color = Color.White, text = "Введите пароль") }
-            )
-
-        }
         OutlinedTextField(
             modifier = Modifier.padding(PaddingValues(8.dp, 8.dp, 8.dp, 8.dp)).fillMaxWidth(),
-            value = botId.value,
+            value = localAliceIp.value,
             enabled = true,
             isError = errorStateEmptyBotId.value,
             textStyle = MaterialTheme.typography.body1,
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = "image",
-                    tint = Color.White
-                )
-            },
             onValueChange = {
-                ContentRepository.botId = it.text
+                ContentRepository.localAliceIp = it.text
                 errorStateEmptyBotId.value = false
-                botId.value = it
+                localAliceIp.value = it
             },
-            label = { Text(color = Color.White, text = "Bot ID для отправки") }
+            label = { Text(color = Color.White, text = "Telegram Bot Token") }
         )
         OutlinedTextField(
 
             modifier = Modifier.padding(PaddingValues(8.dp, 8.dp, 8.dp, 8.dp)).fillMaxWidth(),
-            value = chatId.value,
+            value = localAlicePort.value,
             enabled = true,
             isError = errorStateEmptyChatId.value,
             textStyle = MaterialTheme.typography.body1,
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = "image",
-                    tint = Color.White
-                )
-            },
             onValueChange = {
-                ContentRepository.chatId = it.text
+                ContentRepository.localAlicePort = it.text
                 errorStateEmptyChatId.value = false
-                chatId.value = it
+                localAlicePort.value = it
             },
-            label = { Text(color = Color.White, text = "Chat ID куда отправлять") }
+            label = { Text(color = Color.White, text = "Group ID") }
         )
+        OutlinedTextField(
+
+            modifier = Modifier.padding(PaddingValues(8.dp, 8.dp, 8.dp, 8.dp)).fillMaxWidth(),
+            value = localAlicePort.value,
+            enabled = true,
+            isError = errorStateEmptyChatId.value,
+            textStyle = MaterialTheme.typography.body1,
+            onValueChange = {
+                ContentRepository.localAlicePort = it.text
+                errorStateEmptyChatId.value = false
+                localAlicePort.value = it
+            },
+            label = { Text(color = Color.White, text = "Pinned Message ID") }
+        )
+        Row {
+            OutlinedTextField(
+                modifier = Modifier.padding(PaddingValues(8.dp, 8.dp, 8.dp, 8.dp)),
+                value = telegramBotToken.value,
+
+                isError = errorStateAuth.value,
+                textStyle = MaterialTheme.typography.body1,
+                onValueChange = {
+                    errorStateAuth.value = false
+                    ContentRepository.telegramGroupId = it.text
+                    telegramGroupId.value = it
+                },
+                label = { Text(color = Color.White, text = "IP адрес алисы") }
+            )
+            OutlinedTextField(
+
+                modifier = Modifier.padding(PaddingValues(8.dp, 8.dp, 8.dp, 8.dp)),
+                value = telegramIdPinMessage.value,
+                enabled = true,
+                isError = errorStateAuth.value,
+                textStyle = MaterialTheme.typography.body1,
+                onValueChange = {
+                    errorStateAuth.value = false
+                    ContentRepository.telegramIdPinMessage = it.text
+                    telegramIdPinMessage.value = it
+                },
+                label = { Text(color = Color.White, text = "Порт алисы") }
+            )
+
+        }
         OutlinedButton(
             modifier = Modifier.fillMaxWidth().padding(PaddingValues(16.dp, 8.dp, 16.dp, 16.dp)),
             onClick = {
-                if (ContentRepository.chatId.isNotBlank()) {
-                    tryToConnect(errorStateAuth, isOpen)
+                if (ContentRepository.localAlicePort.isNotBlank()) {
+                    registerTelegramBot()
+                    initStartInfo()
+                    YandexStationComminication.sendCommandToAlice("Включи король и шут два монаха в одну ночь")
                 } else {
                     errorStateEmptyChatId.value = true
                 }
             }
         ) {
-            Text("Авторизоваться")
+            Text("Запустить")
         }
     }
 
-}
 
-fun tryToConnect(errorState: MutableState<Boolean>, isOpen: MutableState<Boolean>) {
-    ReceiveMailInteractor.connectToImapMail(
-
-        onConnectResultStatus = { onConnectResultStatus ->
-            when (onConnectResultStatus) {
-                true -> isOpen.value = false
-                else -> errorState.value = true
-            }
-        },
-
-        onInteredInFolder = { imapFolder ->
-
-        },
-
-        onMessageReceived = { meassage ->
-
-        }
-
-    )
 }

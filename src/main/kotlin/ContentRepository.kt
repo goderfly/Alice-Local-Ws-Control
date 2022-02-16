@@ -3,8 +3,9 @@ import utils.StorableLong
 import utils.StorableString
 
 object ContentRepository {
-    var yourPassword by StorableString("")
-    var yourEmail by StorableString("")
-    var chatId by StorableString("")
-    var botId by StorableString("")
+    var telegramGroupId by StorableString("")
+    var telegramBotToken by StorableString("")
+    var telegramIdPinMessage by StorableString("")
+    var localAliceIp by StorableString("")
+    var localAlicePort by StorableString("")
 }
