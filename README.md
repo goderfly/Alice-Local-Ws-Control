@@ -1,2 +1,0 @@
-# Alice Local WS Control
-
