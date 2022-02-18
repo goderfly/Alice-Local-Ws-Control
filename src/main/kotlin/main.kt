@@ -1,10 +1,8 @@
-import alicews.AliceControlTelegramBot
-import alicews.ApiManager
-import alicews.YandexStationComminication
+import alicews.*
 import alicews.models.Device
 import alicews.models.JwtDeviceResponse
 import alicews.models.Response
-import alicews.toJson
+import alicews.models.genious.search.SearchResponseModel
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -18,27 +16,38 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
+import com.github.kittinunf.fuel.httpGet
 import com.google.gson.Gson
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.tls.decodeCertificatePem
-import org.telegram.telegrambots.meta.TelegramBotsApi
-import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 import theme.Colors
 import theme.typography
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 
-lateinit var bot: AliceControlTelegramBot
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() = application {
+    println("main")
     val isOpen = remember { mutableStateOf(true) }
 
     val trayState = rememberTrayState()
     Tray(
         state = trayState,
         icon = TrayIcon,
-        hint = "Локально управление Алисой",
+        hint = "Локальное управление Алисой",
         menu = {
             Item(
-                text = "Сменить почту/Chat ID",
+                text = "Тест",
+                onClick = {
+                    BotHandler.sendNewNotification("test")
+                }
+            )
+            Item(
+                text = "Сменить конфигурацию",
                 onClick = {
                     isOpen.value = true
                 }
@@ -86,12 +95,7 @@ fun initStartInfo() {
     }
 }
 
-fun registerTelegramBot() {
-    println("Register telegram bot")
-    //ApiContextInitializer.init()
-    bot = AliceControlTelegramBot()
-    TelegramBotsApi(DefaultBotSession::class.java).registerBot(bot)
-}
+
 
 
 

@@ -1,17 +1,9 @@
-import alicews.ApiManager
+import alicews.BotHandler
 import alicews.YandexStationComminication
-import alicews.models.Device
-import alicews.models.JwtDeviceResponse
-import alicews.models.Response
-import alicews.toJson
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AlternateEmail
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Password
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -20,8 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.google.gson.Gson
-import okhttp3.tls.decodeCertificatePem
 import theme.TelegramColors
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -29,85 +19,91 @@ import theme.TelegramColors
 fun ConfigureScreen(
     isOpen: MutableState<Boolean>
 ) {
-    val telegramBotToken = remember { mutableStateOf(TextFieldValue(ContentRepository.telegramBotToken)) }
-    val telegramGroupId = remember { mutableStateOf(TextFieldValue(ContentRepository.telegramGroupId)) }
-    val telegramIdPinMessage = remember { mutableStateOf(TextFieldValue(ContentRepository.telegramIdPinMessage)) }
+    val telegramBotToken =
+        remember { mutableStateOf(TextFieldValue(ContentRepository.telegramBotToken)) }
+    val telegramGroupId =
+        remember { mutableStateOf(TextFieldValue(ContentRepository.telegramGroupId)) }
+    val telegramIdPinMessage =
+        remember { mutableStateOf(TextFieldValue(ContentRepository.telegramIdPinMessage)) }
     val localAliceIp = remember { mutableStateOf(TextFieldValue(ContentRepository.localAliceIp)) }
-    val localAlicePort = remember { mutableStateOf(TextFieldValue(ContentRepository.localAlicePort)) }
+    val localAlicePort =
+        remember { mutableStateOf(TextFieldValue(ContentRepository.localAlicePort)) }
 
-    val errorStateAuth = remember { mutableStateOf(false) }
-    val errorStateEmptyChatId = remember { mutableStateOf(false) }
-    val errorStateEmptyBotId = remember { mutableStateOf(false) }
+    val errorTokenState = remember { mutableStateOf(false) }
+    val errorGroupIdState = remember { mutableStateOf(false) }
+    val errorPinnedMessageState = remember { mutableStateOf(false) }
+    val errorAliceIpState = remember { mutableStateOf(false) }
+    val errorAlicePortState = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.background(TelegramColors.leftBarSelection)
     ) {
         OutlinedTextField(
             modifier = Modifier.padding(PaddingValues(8.dp, 8.dp, 8.dp, 8.dp)).fillMaxWidth(),
-            value = localAliceIp.value,
+            value = telegramBotToken.value,
             enabled = true,
-            isError = errorStateEmptyBotId.value,
+            isError = errorTokenState.value,
             textStyle = MaterialTheme.typography.body1,
             onValueChange = {
-                ContentRepository.localAliceIp = it.text
-                errorStateEmptyBotId.value = false
-                localAliceIp.value = it
+                ContentRepository.telegramBotToken = it.text
+                errorTokenState.value = false
+                telegramBotToken.value = it
             },
             label = { Text(color = Color.White, text = "Telegram Bot Token") }
         )
         OutlinedTextField(
 
             modifier = Modifier.padding(PaddingValues(8.dp, 8.dp, 8.dp, 8.dp)).fillMaxWidth(),
-            value = localAlicePort.value,
+            value = telegramGroupId.value,
             enabled = true,
-            isError = errorStateEmptyChatId.value,
+            isError = errorGroupIdState.value,
             textStyle = MaterialTheme.typography.body1,
             onValueChange = {
-                ContentRepository.localAlicePort = it.text
-                errorStateEmptyChatId.value = false
-                localAlicePort.value = it
+                ContentRepository.telegramGroupId = it.text
+                errorGroupIdState.value = false
+                telegramGroupId.value = it
             },
             label = { Text(color = Color.White, text = "Group ID") }
         )
         OutlinedTextField(
 
             modifier = Modifier.padding(PaddingValues(8.dp, 8.dp, 8.dp, 8.dp)).fillMaxWidth(),
-            value = localAlicePort.value,
+            value = telegramIdPinMessage.value,
             enabled = true,
-            isError = errorStateEmptyChatId.value,
+            isError = errorPinnedMessageState.value,
             textStyle = MaterialTheme.typography.body1,
             onValueChange = {
-                ContentRepository.localAlicePort = it.text
-                errorStateEmptyChatId.value = false
-                localAlicePort.value = it
+                ContentRepository.telegramIdPinMessage = it.text
+                errorPinnedMessageState.value = false
+                telegramIdPinMessage.value = it
             },
             label = { Text(color = Color.White, text = "Pinned Message ID") }
         )
         Row {
             OutlinedTextField(
                 modifier = Modifier.padding(PaddingValues(8.dp, 8.dp, 8.dp, 8.dp)),
-                value = telegramBotToken.value,
+                value = localAliceIp.value,
 
-                isError = errorStateAuth.value,
+                isError = errorAliceIpState.value,
                 textStyle = MaterialTheme.typography.body1,
                 onValueChange = {
-                    errorStateAuth.value = false
-                    ContentRepository.telegramGroupId = it.text
-                    telegramGroupId.value = it
+                    errorAliceIpState.value = false
+                    ContentRepository.localAliceIp = it.text
+                    localAliceIp.value = it
                 },
                 label = { Text(color = Color.White, text = "IP адрес алисы") }
             )
             OutlinedTextField(
 
                 modifier = Modifier.padding(PaddingValues(8.dp, 8.dp, 8.dp, 8.dp)),
-                value = telegramIdPinMessage.value,
+                value = localAlicePort.value,
                 enabled = true,
-                isError = errorStateAuth.value,
+                isError = errorAlicePortState.value,
                 textStyle = MaterialTheme.typography.body1,
                 onValueChange = {
-                    errorStateAuth.value = false
-                    ContentRepository.telegramIdPinMessage = it.text
-                    telegramIdPinMessage.value = it
+                    errorAlicePortState.value = false
+                    ContentRepository.localAlicePort = it.text
+                    localAlicePort.value = it
                 },
                 label = { Text(color = Color.White, text = "Порт алисы") }
             )
@@ -116,13 +112,39 @@ fun ConfigureScreen(
         OutlinedButton(
             modifier = Modifier.fillMaxWidth().padding(PaddingValues(16.dp, 8.dp, 16.dp, 16.dp)),
             onClick = {
-                if (ContentRepository.localAlicePort.isNotBlank()) {
-                    registerTelegramBot()
-                    initStartInfo()
-                    YandexStationComminication.sendCommandToAlice("Включи король и шут два монаха в одну ночь")
-                } else {
-                    errorStateEmptyChatId.value = true
+
+                when {
+                    telegramBotToken.value.text.isBlank() -> {
+                        errorTokenState.value = true
+                        return@OutlinedButton
+                    }
+                    telegramGroupId.value.text.isBlank() -> {
+                        errorGroupIdState.value = true
+                        return@OutlinedButton
+                    }
+                    telegramIdPinMessage.value.text.isBlank() -> {
+                        errorPinnedMessageState.value = true
+                        return@OutlinedButton
+                    }
+                    localAliceIp.value.text.isBlank() -> {
+                        errorAliceIpState.value = true
+                        return@OutlinedButton
+                    }
+                    localAlicePort.value.text.isBlank() -> {
+                        errorAlicePortState.value = true
+                        return@OutlinedButton
+                    }
                 }
+
+                runCatching { BotHandler.registerTelegramBot() }
+                    .onFailure {
+                        errorTokenState.value = true
+                    }
+                    .onSuccess {
+                        initStartInfo()
+                        YandexStationComminication.sendCommandToAlice("Включи случайную песню")
+                        isOpen.value = false
+                    }
             }
         ) {
             Text("Запустить")

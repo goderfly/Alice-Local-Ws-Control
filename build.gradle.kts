@@ -42,9 +42,9 @@ dependencies {
     implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6")
     //Хранение данных
     implementation(Badoo.Reaktive.reaktive)
-    implementation ("org.telegram:telegrambots:5.7.1")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
     implementation ("com.squareup.okhttp3:okhttp-tls:4.9.3")
+    implementation ("com.github.pengrad:java-telegram-bot-api:5.7.0")
 }
 
 object Badoo {

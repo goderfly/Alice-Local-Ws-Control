@@ -3,6 +3,7 @@ package alicews
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 /**
@@ -28,5 +29,6 @@ inline fun <reified T> String.arrayFromJson(): List<T> {
 fun Any.toJson(): String = mapper
     .configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true)
     .configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true)
+    .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
     .writer()
     .writeValueAsString(this)
