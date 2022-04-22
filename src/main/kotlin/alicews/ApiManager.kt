@@ -29,7 +29,7 @@ class ApiManager {
                     .responseString()
 
     companion object {
-        private val OAUTH_TOKEN_HEADER = "Oauth AgAAAAADEWCDAAG8XlTtR80RFEQmhLhJVin7c94"
+        private val OAUTH_TOKEN_HEADER = "OAuth AQAAAAADEWCDAAG8Xrh-c4fT_URBmQDX-KgBR9Y"
 
 
         private const val GLAGOL_API_BASE_URL = "https://quasar.yandex.net/glagol"

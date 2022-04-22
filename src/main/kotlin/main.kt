@@ -1,8 +1,10 @@
-import alicews.*
+import alicews.ApiManager
+import alicews.BotHandler
+import alicews.YandexStationComminication
 import alicews.models.Device
 import alicews.models.JwtDeviceResponse
 import alicews.models.Response
-import alicews.models.genious.search.SearchResponseModel
+import alicews.toJson
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -16,17 +18,10 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import com.github.kittinunf.fuel.httpGet
 import com.google.gson.Gson
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.tls.decodeCertificatePem
 import theme.Colors
 import theme.typography
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
 
 
 @OptIn(ExperimentalComposeUiApi::class)
